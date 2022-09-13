@@ -8,7 +8,7 @@ module.exports = (app) => {
   };
 
   const findById = (id) => {
-    return app.db('client').where({ id });
+    return app.db('client').where({ id }).first();
   };
 
   const remove = (id) => {

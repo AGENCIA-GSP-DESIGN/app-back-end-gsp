@@ -28,10 +28,10 @@ test('Deve inserir um cliente', () => {
       address: 'Endereço Fake 2',
     })
     .then(async (res) => {
-      const client = await getById(res.body[0]);
+      const client = await getById(res.body);
 
       expect(res.status).toBe(200);
-      expect(client[0].email).toBe(email);
+      expect(client.email).toBe(email);
     });
 });
 
@@ -53,14 +53,16 @@ test('Deve buscar um usuário por id', () => {
       typeClient: 'Cliente Final',
       address: 'Endereço Fake 6',
     })
-    .then((client) =>
-      request(app)
-        .get(`${MAIN_ROUTE}/${client[0]}`)
+    .then((client) => {
+      const clientId = client[0];
+      return request(app)
+        .get(`${MAIN_ROUTE}/${clientId}`)
         .then((res) => {
           expect(res.status).toBe(200);
-          expect(res.body[0].id).toBe(client[0]);
-        })
-    );
+          expect(res.body.id).toBe(clientId);
+          expect(res.body.name).toBe('Fake Find');
+        });
+    });
 });
 
 test('Deve buscar todos os clientes', () => {
@@ -90,18 +92,19 @@ test('Deve atualizar um cliente', () => {
       typeClient: 'Cliente Final',
       address: 'Endereço Fake Updated',
     })
-    .then(async (client) =>
-      request(app)
-        .put(`${MAIN_ROUTE}/${client[0]}`)
+    .then(async (client) => {
+      const clientId = client[0];
+      return request(app)
+        .put(`${MAIN_ROUTE}/${clientId}`)
         .send({ name: 'Client Updated' })
         .then(async (res) => {
-          const clientId = await getById(client[0]);
+          const client = await getById(clientId);
 
           expect(res.status).toBe(200);
-          expect(clientId[0].id).toBe(client[0]);
-          expect(clientId[0].name).toBe('Client Updated');
-        })
-    );
+          expect(client.id).toBe(clientId);
+          expect(client.name).toBe('Client Updated');
+        });
+    });
 });
 
 test('Deve remover um cliente', () => {
@@ -123,13 +126,89 @@ test('Deve remover um cliente', () => {
       address: 'Endereço Fake 6',
     })
     .then((client) => {
-      request(app)
-        .delete(`${MAIN_ROUTE}/${client[0]}`)
+      const clientId = client[0];
+      return request(app)
+        .delete(`${MAIN_ROUTE}/${clientId}`)
         .then(async (res) => {
-          const client = await getById({ id: client[0] });
+          const client = await getById({ id: clientId });
 
-          expect(res.status).toBe(201);
-          expect(client).toBeNull();
+          expect(res.status).toBe(204);
+          expect(client).toBeUndefined();
         });
+    });
+});
+
+test('Devo validar o campos antes de Salvar', () => {
+  return request(app)
+    .post(MAIN_ROUTE)
+    .send({
+      id: 0,
+      bestPayDay: '',
+      clientStatus: '',
+      cnpj: '',
+      corporateName: '',
+      cpf: '',
+      customerInformation: '',
+      email: `${Date.now()}@mail.com`,
+      image: '',
+      name: '',
+      nameCompany: '',
+      phone: '',
+      typeClient: '',
+      address: '',
+    })
+    .then(async (res) => {
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toContain('O Id é obrigatório!');
+      expect(res.body.errors).toContain(
+        'O campo Melhor dia de Pagamento é obrigatório!'
+      );
+      expect(res.body.errors).toContain(
+        'O campo de Status de Cliente é obrigatório!'
+      );
+      expect(res.body.errors).toContain('O campo de Cnpj é obrigatório!');
+      expect(res.body.errors).toContain(
+        'O campo Nome da Empresa é obrigatório!'
+      );
+      expect(res.body.errors).toContain('O campo de Cpf é obrigatório!');
+      expect(res.body.errors).toContain(
+        'O campo de Informação de Customer é obrigatório!'
+      );
+      expect(res.body.errors).toContain('O campo da Imagem é obrigatório!');
+      expect(res.body.errors).toContain('O campo de Nome é obrigatório!');
+      expect(res.body.errors).toContain(
+        'O campo Nome da Companhia é obrigatório!'
+      );
+      expect(res.body.errors).toContain('O campo de Telefone é obrigatório!');
+      expect(res.body.errors).toContain(
+        'O campo Tipo de Cliente é obrigatório!'
+      );
+      expect(res.body.errors).toContain('O campo de Endereço é obrigatório!');
+    });
+});
+
+test('Não deve inserir um Cliente com o mesmo E-mail', () => {
+  return request(app)
+    .post(MAIN_ROUTE)
+    .send({
+      bestPayDay: '11',
+      clientStatus: 'Ativo',
+      cnpj: '90.705.515/0001-80',
+      corporateName: 'Fake Corporate Name 2',
+      cpf: '763.462.660-04',
+      customerInformation: 'informação cliente',
+      email,
+      image: 'https://via.placeholder.com/150',
+      name: 'Same Email #3',
+      nameCompany: 'Fake Company',
+      phone: '(56)46456-4564',
+      typeClient: 'Cliente Final',
+      address: 'Endereço Fake 2',
+    })
+    .then(async (res) => {
+      expect(res.status).toBe(400);
+      expect(res.body.errors).toContain(
+        'Não pode inserir um Cliente com o mesmo E-mail!'
+      );
     });
 });

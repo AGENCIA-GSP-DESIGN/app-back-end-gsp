@@ -1,3 +1,5 @@
+const ClientFormError = require('../errors/ClientFormError');
+
 module.exports = (app) => {
   const get = (req, res) => {
     app.services.client
@@ -6,7 +8,23 @@ module.exports = (app) => {
       .catch((err) => console.log(err));
   };
 
-  const save = (req, res) => {
+  const save = async (req, res) => {
+    const error = ClientFormError(req.body);
+
+    await app
+      .db('client')
+      .where('email', req.body.email)
+      .then((result) => {
+        if (result.length && result[0].email) {
+          error.push('Não pode inserir um Cliente com o mesmo E-mail!');
+        }
+      })
+      .catch((err) => console.log(err));
+
+    if (!!error.length) {
+      return res.status(400).json({ errors: error });
+    }
+
     app.services.client
       .save(req.body)
       .then((result) => res.status(200).json(result))
@@ -23,7 +41,7 @@ module.exports = (app) => {
   const remove = (req, res) => {
     app.services.client
       .remove(req.params.id)
-      .then(() => res.status(201))
+      .then(() => res.status(204).send())
       .catch((err) => console.log(err));
   };
 
