@@ -46,6 +46,10 @@ module.exports = (app) => {
   };
 
   const update = (req, res) => {
+    if (req.params.id == 0 || req.body.id == 0) {
+      return res.status(400).json({ errors: 'Cliente inválido.' });
+    }
+
     app.services.client
       .update(req.params.id, req.body)
       .then((result) => res.status(200).json(result))
