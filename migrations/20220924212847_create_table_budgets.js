@@ -20,5 +20,5 @@ exports.up = (knex) => {
  * @returns { Promise<void> }
  */
 exports.down = (knex) => {
-  Promise.all([knex.schema.dropTable('budgets')]);
+  return Promise.all([knex.schema.dropTable('budgets')]);
 };

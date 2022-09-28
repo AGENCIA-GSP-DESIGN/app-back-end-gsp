@@ -18,6 +18,8 @@ test('Deve inserir um orçamento', async () => {
 
   expect(res.status).toBe(200);
   expect(budget.client).toBe('Client #1');
+  // TODO corrigir datas em inserção
+  // expect(budget.date).toBe('01/09/2022');
 });
 
 test('Deve listar todos os orçamentos', () => {
@@ -68,8 +70,14 @@ test('Deve deletar um orçamento', async () => {
         .where({ id: result.body[0] })
         .first();
 
+      const budgetItem = await app
+        .db('budgets_items')
+        .where({ budgetId: result.body[0] })
+        .first();
+
       expect(res.status).toBe(204);
       expect(budget).toBeUndefined();
+      expect(budgetItem).toBeUndefined();
     });
 });
 
