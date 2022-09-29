@@ -62,6 +62,17 @@ test('Deve deletar um orçamento', async () => {
     comments: 'Comments Delete',
   });
 
+  await app.db('budgets_items').insert({
+    budgetId: result.body[0],
+    quantity: 25,
+    service: 'Banner',
+    itemDetail: 'Banner ItemD',
+    unitaryValue: 32.98,
+    discount: 5,
+    subTotal: 783.2749999999999,
+    totalValue: 824.4999999999999,
+  });
+
   return request(app)
     .delete(`${MAIN_ROUTE}/${result.body[0]}`)
     .then(async (res) => {
