@@ -18,8 +18,7 @@ test('Deve inserir um orçamento', async () => {
 
   expect(res.status).toBe(200);
   expect(budget.client).toBe('Client #1');
-  // TODO corrigir datas em inserção
-  // expect(budget.date).toBe('01/09/2022');
+  expect(budget.date).toBe('01/09/2022');
 });
 
 test('Deve listar todos os orçamentos', () => {

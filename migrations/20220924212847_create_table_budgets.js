@@ -7,7 +7,7 @@ exports.up = (knex) => {
     t.increments('id').primary();
     t.string('client').notNull();
     t.string('packageName').notNull();
-    t.datetime('date', { precision: 6 }).defaultTo(knex.fn.now(6));
+    t.string('date').notNull();
     t.string('budgetValidity').notNull();
     t.string('budgetStatus').notNull();
     t.string('formOfPayment').notNull();
