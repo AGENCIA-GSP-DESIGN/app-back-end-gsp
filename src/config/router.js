@@ -14,5 +14,14 @@ module.exports = (app) => {
     .put(app.routes.budget.update)
     .delete(app.routes.budget.remove);
 
-  app.route('/budget_item').post(app.routes.budgets_item.save);
+  app
+    .route('/budget_item')
+    .get(app.routes.budgets_item.get)
+    .post(app.routes.budgets_item.save);
+
+  app
+    .route('/budget_item/:id')
+    .get(app.routes.budgets_item.findById)
+    .put(app.routes.budgets_item.update)
+    .delete(app.routes.budgets_item.remove);
 };
