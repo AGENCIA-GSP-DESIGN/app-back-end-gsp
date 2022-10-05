@@ -17,4 +17,8 @@ app.get('/', (req, res) => {
   res.status(200).send();
 });
 
+app.use((err, req, res, next) => {
+  res.status(500).json({ error: 'Erro Interno! :(' });
+});
+
 module.exports = app;

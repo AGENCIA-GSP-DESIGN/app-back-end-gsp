@@ -5,7 +5,7 @@ module.exports = (app) => {
     app.services.client
       .get()
       .then((result) => res.status(200).json(result))
-      .catch((err) => {});
+      .catch((err) => next(err));
   };
 
   const save = async (req, res) => {
@@ -19,7 +19,7 @@ module.exports = (app) => {
           error.push('Não pode inserir um Cliente com o mesmo E-mail!');
         }
       })
-      .catch((err) => {});
+      .catch((err) => next(err));
 
     if (!!error.length) {
       return res.status(400).json({ errors: error });
@@ -28,21 +28,21 @@ module.exports = (app) => {
     app.services.client
       .save(req.body)
       .then((result) => res.status(200).json(result))
-      .catch((err) => {});
+      .catch((err) => next(err));
   };
 
   const findById = (req, res) => {
     app.services.client
       .findById(req.params.id)
       .then((result) => res.status(200).json(result))
-      .catch((err) => {});
+      .catch((err) => next(err));
   };
 
   const remove = (req, res) => {
     app.services.client
       .remove(req.params.id)
       .then(() => res.status(204).send())
-      .catch((err) => {});
+      .catch((err) => next(err));
   };
 
   const update = (req, res) => {
@@ -53,7 +53,7 @@ module.exports = (app) => {
     app.services.client
       .update(req.params.id, req.body)
       .then((result) => res.status(200).json(result))
-      .catch((err) => {});
+      .catch((err) => next(err));
   };
 
   return {
