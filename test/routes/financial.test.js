@@ -65,6 +65,13 @@ test('Deve remover um fechamento', async () => {
     totalValue: 197.4,
   });
 
+  const financialItem = await app.db('financials_items').insert({
+    quantity: 33,
+    service: 'item remove',
+    subTotal: 66.2,
+    unitaryValue: 2,
+  });
+
   return request(app)
     .delete(`${MAIN_ROUTE}/${financial[0]}`)
     .then(async (res) => {
@@ -72,6 +79,13 @@ test('Deve remover um fechamento', async () => {
 
       const result = await findId(financial[0]);
       expect(result).toBeUndefined();
+
+      const item = await app
+        .db('financials_items')
+        .where({ finacialId: financialItem[0] })
+        .first();
+
+      expect(item).toBeUndefined();
     });
 });
 

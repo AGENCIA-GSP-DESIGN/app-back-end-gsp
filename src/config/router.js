@@ -35,4 +35,15 @@ module.exports = (app) => {
     .get(app.routes.financials.findById)
     .put(app.routes.financials.update)
     .delete(app.routes.financials.remove);
+
+  app
+    .route('/financial_items')
+    .get(app.routes.financials_item.get)
+    .post(app.routes.financials_item.save);
+
+  app
+    .route('/financial_items/:id')
+    .get(app.routes.financials_item.findById)
+    .put(app.routes.financials_item.update)
+    .delete(app.routes.financials_item.remove);
 };
