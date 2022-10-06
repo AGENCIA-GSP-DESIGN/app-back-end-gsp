@@ -1,3 +1,8 @@
+const { storage } = require('../middlewares/uploadImage');
+const multer = require('multer');
+
+const upload = multer({ storage: storage });
+
 module.exports = (app) => {
   app.route('/client').get(app.routes.client.get).post(app.routes.client.save);
   app
@@ -46,4 +51,10 @@ module.exports = (app) => {
     .get(app.routes.financials_item.findById)
     .put(app.routes.financials_item.update)
     .delete(app.routes.financials_item.remove);
+
+  app.post(
+    '/upload-image',
+    upload.single('image'),
+    app.routes.upload_image.upload
+  );
 };
