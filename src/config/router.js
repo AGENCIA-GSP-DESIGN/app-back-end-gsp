@@ -52,9 +52,7 @@ module.exports = (app) => {
     .put(app.routes.financials_item.update)
     .delete(app.routes.financials_item.remove);
 
-  app.post(
-    '/upload-image',
-    upload.single('image'),
-    app.routes.upload_image.upload
-  );
+  app.post('/image', upload.single('image'), app.routes.upload_image.upload);
+
+  app.route('/image/:id').delete(app.routes.upload_image.remove);
 };

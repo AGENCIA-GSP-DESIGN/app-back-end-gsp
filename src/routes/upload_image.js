@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 module.exports = () => {
   const upload = (req, res) => {
     if (req.file) {
@@ -14,5 +17,12 @@ module.exports = () => {
     });
   };
 
-  return { upload };
+  const remove = (req, res, next) => {
+    fs.unlink(path.resolve(`images/${req.params.id}`), (err) => {
+      if (err) return next(err);
+      return res.status(201).send();
+    });
+  };
+
+  return { upload, remove };
 };
