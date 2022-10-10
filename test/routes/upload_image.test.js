@@ -15,7 +15,7 @@ test('Deve fazer o upload da image para o servidor', () => {
     .attach('image', imageTest)
     .then((res) => {
       expect(res.status).toBe(200);
-      expect(res.body).not.toBeNull();
+      expect(res.body.message).toBe('Upload feito com sucesso!');
 
       nameImage = res.body.filename;
     });

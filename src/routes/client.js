@@ -1,6 +1,24 @@
 const ClientFormError = require('../errors/ClientFormError');
 
 module.exports = (app) => {
+  const validate = async (client, save = true) => {
+    const error = ClientFormError(client);
+
+    if (save) {
+      await app
+        .db('client')
+        .where('email', client.email)
+        .then((result) => {
+          if (result.length && result[0]?.email) {
+            error.push('Não pode inserir um Cliente com o mesmo E-mail!');
+          }
+        })
+        .catch((err) => {});
+    }
+
+    return error;
+  };
+
   const get = (req, res, next) => {
     app.services.client
       .get()
@@ -9,20 +27,10 @@ module.exports = (app) => {
   };
 
   const save = async (req, res, next) => {
-    const error = ClientFormError(req.body);
+    const errors = await validate(req.body);
 
-    await app
-      .db('client')
-      .where('email', req.body.email)
-      .then((result) => {
-        if (result.length && result[0].email) {
-          error.push('Não pode inserir um Cliente com o mesmo E-mail!');
-        }
-      })
-      .catch((err) => next(err));
-
-    if (!!error.length) {
-      return res.status(400).json({ errors: error });
+    if (errors.length > 0) {
+      return res.status(400).json({ errors });
     }
 
     app.services.client
@@ -46,8 +54,10 @@ module.exports = (app) => {
   };
 
   const update = (req, res, next) => {
-    if (req.params.id == 0 || req.body.id == 0) {
-      return res.status(400).json({ errors: 'Cliente inválido.' });
+    const errors = validate(req.body, false);
+
+    if (errors.length > 0) {
+      return res.status(400).json({ errors });
     }
 
     app.services.client

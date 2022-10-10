@@ -1,10 +1,6 @@
 module.exports = (body, app) => {
   const errors = [];
 
-  if (body.id <= 0) {
-    errors.push('O Id é obrigatório!');
-  }
-
   if (body.bestPayDay == '') {
     errors.push('O campo Melhor dia de Pagamento é obrigatório!');
   }

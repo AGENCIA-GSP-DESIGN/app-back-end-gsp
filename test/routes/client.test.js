@@ -107,35 +107,6 @@ test('Deve atualizar um cliente', () => {
     });
 });
 
-test('Ao atualizar um cliente não deve aceitar id nulo ou zero (0)', () => {
-  return app
-    .db('client')
-    .insert({
-      bestPayDay: '15',
-      clientStatus: 'Ativo',
-      cnpj: '90.705.515/0001-80',
-      corporateName: 'Fake Corporate Zero',
-      cpf: '763.462.660-04',
-      customerInformation: 'informação cliente',
-      email: `${Date.now()}@gmail.com`,
-      image: 'https://via.placeholder.com/150',
-      name: 'Client Zero',
-      nameCompany: 'Company Zero',
-      phone: '(56)46456-4564',
-      typeClient: 'Cliente Final',
-      address: 'Endereço Zero',
-    })
-    .then(async () => {
-      return request(app)
-        .put(`${MAIN_ROUTE}/0`)
-        .send({ id: 0, name: 'Client Zero Zero' })
-        .then(async (res) => {
-          expect(res.status).toBe(400);
-          expect(res.body.errors).toBe('Cliente inválido.');
-        });
-    });
-});
-
 test('Deve remover um cliente', () => {
   return app
     .db('client')
@@ -188,7 +159,6 @@ test('Devo validar o campos antes de Salvar', () => {
     })
     .then(async (res) => {
       expect(res.status).toBe(400);
-      expect(res.body.errors).toContain('O Id é obrigatório!');
       expect(res.body.errors).toContain(
         'O campo Melhor dia de Pagamento é obrigatório!'
       );
